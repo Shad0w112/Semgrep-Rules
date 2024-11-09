@@ -1,0 +1,19 @@
+rules:
+- id: not-authorized-controller
+  paths:
+    include :
+      - "*Controller.java"
+  patterns:
+    - pattern-either:
+      - pattern: |
+          @Controller
+          @RequestMapping($PATH)
+          public class $CONTROLLER { ... }
+    - pattern-not: |
+        @PreAuthorize("...")
+        @Controller
+        @RequestMapping($PATH)
+        public class $CONTROLLER { ... }
+  message: NOT AUTHORIZED CONTROLLER = $CONTROLLER,$PATH
+  languages: [java]
+  severity: WARNING
