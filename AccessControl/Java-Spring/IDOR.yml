@@ -1,0 +1,81 @@
+rules:
+- id: idor-vulnerability
+  paths:
+    include :
+      - "*Controller.java"  
+  patterns:
+      - pattern-either:
+            - pattern: |  
+                @PreAuthorize("...") 
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                @ResponseBody
+                public $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |
+                @PreAuthorize("...") 
+                @$MAPPINGTYPE(value = $PATH)
+                @ResponseBody
+                public $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |
+                @PreAuthorize("...") 
+                @$MAPPINGTYPE(value = $PATH)
+                public $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @PreAuthorize("...") 
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                public $RETURNTYPE $METHOD(...) { ...}  
+            - pattern: |
+                @PreAuthorize("...") 
+                @$MAPPINGTYPE(value = $PATH)
+                @ResponseBody
+                private $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @PreAuthorize("...") 
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                @ResponseBody
+                private $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |
+                @PreAuthorize("...") 
+                @$MAPPINGTYPE(value = $PATH)
+                private $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @PreAuthorize("...") 
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                private $RETURNTYPE $METHOD(...) { ...}        
+##############   WithOut PreAuthorized   ############################################################# 
+            - pattern: |  
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                @ResponseBody
+                public $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |
+                @$MAPPINGTYPE(value = $PATH)
+                public $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                public $RETURNTYPE $METHOD(...) { ...} 
+            - pattern: |
+                @$MAPPINGTYPE(value = $PATH)
+                @ResponseBody
+                private $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                @ResponseBody
+                private $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |
+                @$MAPPINGTYPE(value = $PATH)
+                private $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                private $RETURNTYPE $METHOD(...) { ...}   
+            - pattern: |  
+                @$MAPPINGTYPE(value = $PATH)
+                @ResponseBody
+                private $RETURNTYPE $METHOD(...) { ...}              
+      - metavariable-regex:
+            metavariable: '$MAPPINGTYPE'
+            regex: '.*(RequestMapping|DeleteMapping|PostMapping|GetMapping|PutMapping).*'
+      - metavariable-regex:
+            metavariable: '$PATH'
+            regex: '".*/\{.*[Ii][Dd]\}.*"'
+  message: IDOR Vulnerability = $METHOD,$PATH
+  languages: [java]
+  severity: WARNING
