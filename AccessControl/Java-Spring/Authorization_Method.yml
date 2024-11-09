@@ -1,0 +1,108 @@
+rules:
+- id: not-authorized-controller-method
+  paths:
+    include :
+      - "*Controller.java"  
+  patterns:
+      - pattern-either:
+            - pattern: |
+                @$MAPPINGTYPE(value = $PATH)
+                @ResponseBody
+                public $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                @ResponseBody
+                public $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @$MAPPINGTYPE("...")
+                @ResponseBody
+                public $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |
+                @$MAPPINGTYPE(value = $PATH)
+                public $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                public $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @$MAPPINGTYPE("...")
+                public $RETURNTYPE $METHOD(...) { ...}   
+            - pattern: |
+                @$MAPPINGTYPE(value = $PATH)
+                @ResponseBody
+                private $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                @ResponseBody
+                private $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @$MAPPINGTYPE("...")
+                @ResponseBody
+                private $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |
+                @$MAPPINGTYPE(value = $PATH)
+                private $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+                private $RETURNTYPE $METHOD(...) { ...}
+            - pattern: |  
+                @$MAPPINGTYPE("...")
+                private $RETURNTYPE $METHOD(...) { ...}         
+      - pattern-not: |
+          @PreAuthorize("...")
+          @$MAPPINGTYPE(value = $PATH)
+          @ResponseBody
+          public $RETURNTYPE $METHOD(...) { ...}
+      - pattern-not: |
+          @PreAuthorize("...")  
+          @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+          @ResponseBody
+          public $RETURNTYPE $METHOD(...) { ...}
+      - pattern-not: |  
+          @PreAuthorize("...")
+          @$MAPPINGTYPE("...")
+          @ResponseBody
+          public $RETURNTYPE $METHOD(...) { ...}
+      - pattern-not: |
+          @PreAuthorize("...")
+          @$MAPPINGTYPE(value = $PATH)
+          public $RETURNTYPE $METHOD(...) { ...}
+      - pattern-not: |  
+          @PreAuthorize("...")
+          @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+          public $RETURNTYPE $METHOD(...) { ...}
+      - pattern-not: |  
+          @PreAuthorize("...")
+          @$MAPPINGTYPE("...")
+          public $RETURNTYPE $METHOD(...) { ...}   
+      - pattern-not: |
+          @$MAPPINGTYPE(value = $PATH)
+          @ResponseBody
+          private $RETURNTYPE $METHOD(...) { ...}
+      - pattern-not: |  
+          @PreAuthorize("...")
+          @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+          @ResponseBody
+          private $RETURNTYPE $METHOD(...) { ...}
+      - pattern-not: |  
+          @PreAuthorize("...")
+          @$MAPPINGTYPE("...")
+          @ResponseBody
+          private $RETURNTYPE $METHOD(...) { ...}
+      - pattern-not: |
+          @PreAuthorize("...")
+          @$MAPPINGTYPE(value = $PATH)
+          private $RETURNTYPE $METHOD(...) { ...}
+      - pattern-not: |  
+          @PreAuthorize("...")
+          @$MAPPINGTYPE(method = $HTTPMETHOD, value = $PATH)
+          private $RETURNTYPE $METHOD(...) { ...}
+      - pattern-not: | 
+          @PreAuthorize("...") 
+          @$MAPPINGTYPE("...")
+          private $RETURNTYPE $METHOD(...) { ...}         
+      - metavariable-regex:
+            metavariable: '$MAPPINGTYPE'
+            regex: '.*(RequestMapping|DeleteMapping|PostMapping|GetMapping|PutMapping).*'
+  message: NOT AUTHORIZED CONTROLLER METHOD = $METHOD,$PATH
+  languages: [java]
+  severity: WARNING
